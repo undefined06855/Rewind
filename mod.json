@@ -1,0 +1,22 @@
+{
+	"geode": "4.3.1",
+	"gd": {
+		"win": "2.2074",
+		"mac": "2.2074"
+	},
+
+	"version": "v1.0.0",
+	"id": "undefined0.rewind",
+	"name": "Rewind",
+	"developer": "undefined0",
+	"description": "Virtual Console-like rewinding!",
+	"tags": [],
+
+	"dependencies": {
+		"geode.custom-keybinds": "v1.10.3"
+	},
+
+	"links": {
+		"source": "https://github.com/undefined06855/rewind"
+	}
+}
