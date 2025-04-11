@@ -125,7 +125,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // GL_RGB used here since we dont need alpha and we have a lot of these
     // not sure how much memory/performance this really saves though but it's
     // free so might as well
-    auto rentex = RenderTexture(res.width, res.height, GL_RGB, GL_RGB).intoManagedSprite();
+    auto rentex = RenderTexture(res.width, res.height, 0x80E0, 0x80E0).intoManagedSprite();
 
     // repeating background breaks in render texture, reset pos and capture
     auto origBGPos = m_background->getPosition();
@@ -187,7 +187,7 @@ void HookedGJBaseGameLayer::startRewind() {
 
     // cant just use gjbgl actionmanager since itll get paused when rewinding
     // so using ccscene (or whatever gjbgl parent is)
-    getParent()->getActionManager()->addAction(FadeMusicAction::create(.5f, FadeMusicDirection::FadeOut), FMODAudioEngine::get(), false);
+    getParent()->getActionManager()->addAction(FadeMusicAction::create(.8f, FadeMusicDirection::FadeOut), FMODAudioEngine::get(), false);
 }
 
 void HookedGJBaseGameLayer::commitRewind() {
@@ -228,7 +228,7 @@ void HookedGJBaseGameLayer::commitRewind() {
                 fields->m_isTransitioningOut = false;
                 fields->m_checkpointTimer = 0.f;
 
-                getParent()->getActionManager()->addAction(FadeMusicAction::create(.5f, FadeMusicDirection::FadeIn), FMODAudioEngine::get(), false);
+                getParent()->getActionManager()->addAction(FadeMusicAction::create(.8f, FadeMusicDirection::FadeIn), FMODAudioEngine::get(), false);
             }),
             nullptr
         )
