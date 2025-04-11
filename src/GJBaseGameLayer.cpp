@@ -31,11 +31,13 @@ bool HookedGJBaseGameLayer::init() {
 
     auto fields = m_fields.self();
 
+#ifndef GEODE_IS_IOS
     /* "rewind"_spr */ 
     addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
         bool ate = rewindStateUpdate(event->isDown());
         return ate ? geode::ListenerResult::Stop : geode::ListenerResult::Propagate;
     }, "rewind"_spr);
+#endif
 
     // background gradient
     fields->m_bgGradient = cocos2d::CCLayerGradient::create({ 0, 101, 253, 255 }, { 0, 46, 115, 255 }, { -.5f, -1.f });

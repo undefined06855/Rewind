@@ -24,6 +24,7 @@ bool RewindButton::init() {
 
     auto spriteBase = cocos2d::CCSprite::create("checkpoint-ui-base.png"_spr);
 
+#ifndef GEODE_IS_IOS
     // copy of addBindSprites from custom keybinds UILayer.cpp but slightly modified
     // keeps it consistent with the other checkpoint buttons
     auto bindContainer = cocos2d::CCNode::create();
@@ -40,9 +41,10 @@ bool RewindButton::init() {
     bindContainer->setContentSize({ spriteBase->getContentSize().width / bindContainer->getScale(), 40.f });
     bindContainer->setLayout(geode::RowLayout::create());
     bindContainer->setAnchorPoint({ .5f, .5f });
+    spriteBase->addChildAtPosition(bindContainer, geode::Anchor::Bottom, { 0.f, -2.f });
+#endif
 
     spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center);
-    spriteBase->addChildAtPosition(bindContainer, geode::Anchor::Bottom, { 0.f, -2.f });
     
     return CCMenuItemSpriteExtra::init(spriteBase, nullptr, nullptr, menu_selector(RewindButton::fakeCallback));
 }
