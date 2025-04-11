@@ -23,7 +23,7 @@ endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-CPMAddPackage("gh:matcool/gd-render-texture#ec05bb6")
+CPMAddPackage("gh:undefined06855/gd-render-texture#8b42c70")
 target_link_libraries(${PROJECT_NAME} gd-render-texture)
 
 setup_geode_mod(${PROJECT_NAME})
