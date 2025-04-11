@@ -14,8 +14,13 @@
 	"description": "Virtual Console-like rewinding!",
 	"tags": [],
 
+	"resources": {
+		"sprites": [ "resources/*.png" ]
+	},
+
 	"dependencies": {
-		"geode.custom-keybinds": "v1.10.3"
+		"geode.custom-keybinds": "v1.10.3",
+		"geode.node-ids": "v1.20.1"
 	},
 
 	"links": {

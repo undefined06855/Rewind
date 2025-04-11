@@ -1,4 +1,5 @@
 #include "GJBaseGameLayer.hpp"
+#include "FadeMusicAction.hpp"
 #include <geode.custom-keybinds/include/Keybinds.hpp>
 
 HookedGJBaseGameLayer::Fields::Fields()
@@ -31,33 +32,9 @@ bool HookedGJBaseGameLayer::init() {
     auto fields = m_fields.self();
 
     /* "rewind"_spr */ 
-    addEventListener<keybinds::InvokeBindFilter>([this, cast, fields](keybinds::InvokeBindEvent* event) {
-        // if paused or in normal mode or transitioning or rewinding (but only on keydown)
-        if (
-               cast->m_isPaused 
-            || !cast->m_isPracticeMode
-            || fields->m_isTransitioningOut
-            || ( event->isDown() && fields->m_isRewinding )
-        ) {
-            fields->m_rewindsCancelled++;
-            return geode::ListenerResult::Propagate;
-        }
-
-        // see comment on m_rewindsCancelled member for more info
-        if (fields->m_rewindsCancelled > 0) {
-            fields->m_rewindsCancelled--;
-            return geode::ListenerResult::Propagate;
-        }
-        
-        if (event->isDown()) {
-            fields->m_rewindTimer = 0.f;
-            startRewind();
-        } else {
-            // released key, commit
-            commitRewind();
-        }
-
-        return geode::ListenerResult::Stop;
+    addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+        bool ate = rewindStateUpdate(event->isDown());
+        return ate ? geode::ListenerResult::Stop : geode::ListenerResult::Propagate;
     }, "rewind"_spr);
 
     // background gradient
@@ -106,6 +83,38 @@ void HookedGJBaseGameLayer::update(float dt) {
     }
 }
 
+bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
+    auto fields = m_fields.self();
+    auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
+
+    // if paused or in normal mode or transitioning or rewinding (but only on keydown)
+    if (
+        cast->m_isPaused 
+        || !cast->m_isPracticeMode
+        || fields->m_isTransitioningOut
+        || ( down && fields->m_isRewinding )
+    ) {
+        fields->m_rewindsCancelled++;
+        return false;
+    }
+
+    // see comment on m_rewindsCancelled member for more info
+    if (fields->m_rewindsCancelled > 0) {
+        fields->m_rewindsCancelled--;
+        return false;
+    }
+    
+    if (down) {
+        fields->m_rewindTimer = 0.f;
+        startRewind();
+    } else {
+        // released key, commit
+        commitRewind();
+    }
+
+    return true;
+}
+
 void HookedGJBaseGameLayer::addRewindFrame() {
     auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
     auto fields = m_fields.self();
@@ -119,7 +128,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // repeating background breaks in render texture, reset pos and capture
     auto origBGPos = m_background->getPosition();
     m_background->setPosition({ 0.f, 0.f });
-    rentex->render.capture(m_objectLayer->getParent());
+    rentex->render.capture(getChildByID("main-node"));
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
@@ -129,9 +138,13 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->sprite->setZOrder(1);
 
     // and make a frame and push back
+    float currentSongPitch;
     auto frame = RewindFrame{
         .m_checkpoint = geode::Ref(cast->createCheckpoint()),
-        .m_preview = rentex->sprite
+        .m_preview = rentex->sprite,
+
+        .m_player1Rotation = m_player1->getRotation(),
+        .m_player2Rotation = m_player2->getRotation(),
     };
 
     fields->m_history.push_front(frame);
@@ -169,6 +182,10 @@ void HookedGJBaseGameLayer::startRewind() {
     tickRewind(); // add first overlay image
 
     m_fields->m_isRewinding = true;
+
+    // cant just use gjbgl actionmanager since itll get paused when rewinding
+    // so using ccscene (or whatever gjbgl parent is)
+    getParent()->getActionManager()->addAction(FadeMusicAction::create(.5f, FadeMusicDirection::FadeOut), FMODAudioEngine::get(), false);
 }
 
 void HookedGJBaseGameLayer::commitRewind() {
@@ -201,13 +218,15 @@ void HookedGJBaseGameLayer::commitRewind() {
                 m_player2->setRotation(frame.m_player2Rotation);
                 m_attempts--;
             
-                // pop all frames between now and reset
+                // pop all frames between now and reset pos
                 for (int i = 0; i < fields->m_rewindIndex; i++) fields->m_history.pop_front();
                 fields->m_rewindIndex = 0;
 
                 // and reset members
                 fields->m_isTransitioningOut = false;
                 fields->m_checkpointTimer = 0.f;
+
+                getParent()->getActionManager()->addAction(FadeMusicAction::create(.5f, FadeMusicDirection::FadeIn), FMODAudioEngine::get(), false);
             }),
             nullptr
         )

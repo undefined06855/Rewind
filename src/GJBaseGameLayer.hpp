@@ -39,6 +39,8 @@ class $modify(HookedGJBaseGameLayer, GJBaseGameLayer) {
 
     void addRewindFrame();
     void tickRewind();
+
+    bool rewindStateUpdate(bool down);
     
     void startRewind();
     void commitRewind();
