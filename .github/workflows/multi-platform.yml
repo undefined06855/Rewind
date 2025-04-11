@@ -40,7 +40,7 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           combine: true
-          ask: nightly
+          sdk: nightly
           target: ${{ matrix.config.target }}
 
   package:
