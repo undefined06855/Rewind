@@ -1,6 +1,8 @@
 #include "GJBaseGameLayer.hpp"
 #include "FadeMusicAction.hpp"
+#ifndef GEODE_IS_IOS
 #include <geode.custom-keybinds/include/Keybinds.hpp>
+#endif
 
 HookedGJBaseGameLayer::Fields::Fields()
     : m_history({})
