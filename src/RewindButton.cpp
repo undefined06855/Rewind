@@ -41,7 +41,7 @@ bool RewindButton::init() {
     bindContainer->setContentSize({ spriteBase->getContentSize().width / bindContainer->getScale(), 40.f });
     bindContainer->setLayout(geode::RowLayout::create());
     bindContainer->setAnchorPoint({ .5f, .5f });
-    spriteBase->addChildAtPosition(bindContainer, geode::Anchor::Bottom, { 0.f, -2.f });
+    spriteBase->addChildAtPosition(bindContainer, geode::Anchor::Bottom, { 0.f, -1.5f });
 #endif
 
     spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center);
