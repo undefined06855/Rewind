@@ -181,6 +181,7 @@ void HookedGJBaseGameLayer::tickRewind() {
 void HookedGJBaseGameLayer::startRewind() {
     runAction(cocos2d::CCScaleTo::create(.2f, .9f));
     m_objectLayer->getParent()->setVisible(false);
+    m_shaderLayer->setVisible(false);
 
     tickRewind(); // add first overlay image
 
@@ -203,6 +204,7 @@ void HookedGJBaseGameLayer::commitRewind() {
             // cocos2d::CCDelayTime::create(.1f), // unsure on whether to keep this
             geode::cocos::CallFuncExt::create([this, fields]{
                 m_objectLayer->getParent()->setVisible(true);
+                m_shaderLayer->setVisible(true);
 
                 auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
                 
