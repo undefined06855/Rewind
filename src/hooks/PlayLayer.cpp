@@ -1,6 +1,6 @@
 #include "PlayLayer.hpp"
 #include "GJBaseGameLayer.hpp"
-#include "RewindButton.hpp"
+#include "../RewindButton.hpp"
 
 bool HookedPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
     if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;

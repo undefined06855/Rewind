@@ -2,7 +2,7 @@
 #ifndef GEODE_IS_IOS
 #include <geode.custom-keybinds/include/Keybinds.hpp>
 #endif
-#include "GJBaseGameLayer.hpp"
+#include "hooks/GJBaseGameLayer.hpp"
 
 RewindButton* RewindButton::create() {
     auto ret = new RewindButton;

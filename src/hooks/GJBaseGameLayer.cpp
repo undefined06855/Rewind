@@ -1,5 +1,5 @@
 #include "GJBaseGameLayer.hpp"
-#include "FadeMusicAction.hpp"
+#include "../FadeMusicAction.hpp"
 #ifndef GEODE_IS_IOS
 #include <geode.custom-keybinds/include/Keybinds.hpp>
 #endif
@@ -34,7 +34,6 @@ bool HookedGJBaseGameLayer::init() {
     auto fields = m_fields.self();
 
 #ifndef GEODE_IS_IOS
-    /* "rewind"_spr */ 
     addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
         bool ate = rewindStateUpdate(event->isDown());
         return ate ? geode::ListenerResult::Stop : geode::ListenerResult::Propagate;
@@ -129,10 +128,10 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // free so might as well
     auto rentex = RenderTexture(res.width, res.height, GL_RGB, GL_RGB).intoManagedSprite();
 
-    // repeating background breaks in render texture, reset pos and capture
+    // repeating background breaks in rendertexture, reset pos and capture
     auto origBGPos = m_background->getPosition();
     m_background->setPosition({ 0.f, 0.f });
-    rentex->render.capture(getChildByID("main-node"));
+    rentex->render.capture(m_objectLayer->getParent());
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
@@ -230,7 +229,8 @@ void HookedGJBaseGameLayer::commitRewind() {
                 fields->m_isTransitioningOut = false;
                 fields->m_checkpointTimer = 0.f;
 
-                getParent()->getActionManager()->addAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn), FMODAudioEngine::get(), false);
+                auto pitches = frame.m_checkpoint->m_audioState.m_pitchForChannels1;
+                getParent()->getActionManager()->addAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches), FMODAudioEngine::get(), false);
             }),
             nullptr
         )
