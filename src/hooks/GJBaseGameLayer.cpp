@@ -198,7 +198,7 @@ void HookedGJBaseGameLayer::commitRewind() {
     fields->m_isTransitioningOut = true;
 
     runAction(
-        cocos2d::CCSequence::create(
+        cocos2d::CCSequence::createWithTwoActions(
             cocos2d::CCScaleTo::create(.2f, 1.f),
             // cocos2d::CCDelayTime::create(.1f), // unsure on whether to keep this
             geode::cocos::CallFuncExt::create([this, fields]{
@@ -229,10 +229,12 @@ void HookedGJBaseGameLayer::commitRewind() {
                 fields->m_isTransitioningOut = false;
                 fields->m_checkpointTimer = 0.f;
 
-                auto pitches = frame.m_checkpoint->m_audioState.m_pitchForChannels1;
+                auto states = frame.m_checkpoint->m_audioState.m_unkMapIntFMODSoundState;
+                std::unordered_map<int, float> pitches = {};
+                // m_pitch exists but seems to be really tiny?
+                for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
                 getParent()->getActionManager()->addAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches), FMODAudioEngine::get(), false);
-            }),
-            nullptr
+            })
         )
     );
 }
