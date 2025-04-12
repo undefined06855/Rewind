@@ -28,8 +28,7 @@ bool FadeMusicAction::init(float d, FadeMusicDirection dir, const std::unordered
     // if direction is fade out, initialOrTarget stores initial
     // if direction is fade in, initialOrTarget stores target
     if (dir == FadeMusicDirection::FadeOut) {
-        auto target = (FMODAudioEngine*)getTarget();
-        for (auto& [id, channel] : target->m_channelIDToChannel) {
+        for (auto& [id, channel] : FMODAudioEngine::get()->m_channelIDToChannel) {
             m_initialOrTargetPitches[id] = 0.f;
             channel->getPitch(&m_initialOrTargetPitches[id]);
         }
@@ -41,13 +40,6 @@ bool FadeMusicAction::init(float d, FadeMusicDirection dir, const std::unordered
 }
 
 void FadeMusicAction::update(float time) {
-    auto target = (FMODAudioEngine*)getTarget();
-
-    if (!target /* || target->m_bFading? */) {
-        target->stopAction(this);
-        return;
-    }
-
     // circular ease, taken from fade music on death
     float eased;
     if (m_dir == FadeMusicDirection::FadeIn) {
@@ -62,7 +54,7 @@ void FadeMusicAction::update(float time) {
     // the curve fits into 0 - 1 in the y axis, multiplying will scale it from
     // 0 to initial or target
     // just plug it into desmos or something
-    for (auto& [id, channel] : target->m_channelIDToChannel) {
+    for (auto& [id, channel] : FMODAudioEngine::get()->m_channelIDToChannel) {
         float multipliedEased = eased * m_initialOrTargetPitches[id];
         channel->setPitch(multipliedEased);
     }
