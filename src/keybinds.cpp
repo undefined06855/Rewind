@@ -6,7 +6,7 @@ $on_mod(Loaded) {
 		"rewind"_spr,
 		"Rewind",
 		"",
-		{ keybinds::Keybind::create(cocos2d::KEY_E), keybinds::Keybind::create(cocos2d::CONTROLLER_Y) },
+		{ keybinds::Keybind::create(cocos2d::KEY_C) },
 		keybinds::Category::PLAY,
 		false
 	});
