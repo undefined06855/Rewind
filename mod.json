@@ -1,62 +1,64 @@
 {
-	"geode": "4.3.1",
-	"gd": {
-		"win": "2.2074",
-		"mac": "2.2074",
+    "geode": "4.3.1",
+    "gd": {
+        "win": "2.2074",
+        "mac": "2.2074",
         "android": "2.2074",
         "ios": "2.2074"
-	},
-
-	"version": "v1.0.0",
-	"id": "undefined0.rewind",
-	"name": "Rewind",
-	"developer": "undefined0",
-	"description": "It's Rewind time - quickly go back to a previous point in the level!",
-	"tags": [],
-
-	"resources": {
-		"sprites": [ "resources/*.png" ]
-	},
-
-	"dependencies": {
-		"geode.custom-keybinds": {
-			"version": "v1.10.3",
-			"importance": "required",
-			"platforms": [ "win", "android32", "android64", "macos" ]
-		},
-		"geode.node-ids": "v1.20.1"
-	},
-
-	"links": {
-		"source": "https://github.com/undefined06855/Rewind"
-	},
-
-	"settings": {
-		"frames-per-second": {
-			"name": "Frames per second",
-			"description": "The amount of captured frames every second.",
-			"type": "int",
-			"min": 2,
-			"max": 60,
-			"default": {
-				"android": 15,
-				"ios": 15,
-				"win": 20,
-				"mac": 20
-			}
-		},
-		"history-length": {
-			"name": "History length",
-			"description": "The length of rewind history stored, in frames.",
-			"type": "int",
-			"min": 20,
-			"max": 400,
-			"default": {
-				"android": 140,
-				"ios": 140,
-				"win": 180,
-				"mac": 180
-			}
-		}
-	}
+    },
+    "version": "v1.0.0",
+    "id": "undefined0.rewind",
+    "name": "Rewind",
+    "developer": "undefined0",
+    "description": "It's Rewind time - quickly go back to a previous point in the level!",
+    "tags": [],
+    "resources": {
+        "sprites": [
+            "resources/*.png"
+        ]
+    },
+    "dependencies": {
+        "geode.custom-keybinds": {
+            "version": "v1.10.3",
+            "importance": "required",
+            "platforms": [
+                "win",
+                "android32",
+                "android64",
+                "macos"
+            ]
+        },
+        "geode.node-ids": "v1.20.1"
+    },
+    "links": {
+        "source": "https://github.com/undefined06855/Rewind"
+    },
+    "settings": {
+        "frames-per-second": {
+            "name": "Frames per second",
+            "description": "The amount of captured frames every second.",
+            "type": "int",
+            "min": 2,
+            "max": 60,
+            "default": {
+                "android": 15,
+                "ios": 15,
+                "win": 20,
+                "mac": 20
+            }
+        },
+        "history-length": {
+            "name": "History length",
+            "description": "The length of rewind history stored, in frames.",
+            "type": "int",
+            "min": 20,
+            "max": 400,
+            "default": {
+                "android": 140,
+                "ios": 140,
+                "win": 180,
+                "mac": 180
+            }
+        }
+    }
 }
