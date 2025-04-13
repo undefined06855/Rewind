@@ -29,5 +29,34 @@
 
 	"links": {
 		"source": "https://github.com/undefined06855/rewind"
+	},
+
+	"settings": {
+		"frames-per-second": {
+			"name": "Frames per second",
+			"description": "The amount of captured frames every second.",
+			"type": "int",
+			"min": 2,
+			"max": 60,
+			"default": {
+				"android": 20,
+				"ios": 20,
+				"win": 30,
+				"mac": 30
+			}
+		},
+		"history-length": {
+			"name": "History length",
+			"description": "The length of rewind history stored, in frames.",
+			"type": "int",
+			"min": 20,
+			"max": 400,
+			"default": {
+				"android": 120,
+				"ios": 130,
+				"win": 180,
+				"mac": 180
+			}
+		}
 	}
 }

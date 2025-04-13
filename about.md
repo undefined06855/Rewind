@@ -10,8 +10,7 @@ remember to fill this out
 
 todo:
 - mod icon
-- ios
-- settings
+- ios????
 - performance checks
 - stuff on ui layer (stuff set with ui trigger) not being drawn to frame preview rendertexture
 - camera rotation not taken into account

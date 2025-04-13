@@ -6,7 +6,7 @@ public:
     static RewindButton* create();
     bool init();
 
-    void fakeCallback(cocos2d::CCObject*);
+    void fakeCallback(cocos2d::CCObject* sender);
     void selected();
     void unselected();
 };

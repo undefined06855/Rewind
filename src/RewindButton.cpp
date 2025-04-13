@@ -18,13 +18,11 @@ RewindButton* RewindButton::create() {
 bool RewindButton::init() {
     setID("rewind-button"_spr);
 
-    auto rewindLabel = cocos2d::CCLabelBMFont::create("Rewind", "bigFont.fnt");
-    rewindLabel->setScale(.2f);
-
-    auto rewindSprite = cocos2d::CCSprite::createWithSpriteFrameName("edit_ccwBtn_001.png");
-    rewindSprite->addChildAtPosition(rewindLabel, geode::Anchor::Center);
+    auto rewindSprite = cocos2d::CCSprite::createWithSpriteFrameName("edit_leftBtn2_001.png");
+    rewindSprite->setScale(1.2f);
 
     auto spriteBase = cocos2d::CCSprite::create("checkpoint-ui-base.png"_spr);
+    spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center, { -3.f, 0.f });
 
 #ifndef GEODE_IS_IOS
     // copy of addBindSprites from custom keybinds UILayer.cpp but slightly modified
@@ -46,18 +44,16 @@ bool RewindButton::init() {
     spriteBase->addChildAtPosition(bindContainer, geode::Anchor::Bottom, { 0.f, -1.5f });
 #endif
 
-    spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center);
-
     bool ret = CCMenuItemSpriteExtra::init(spriteBase, nullptr, nullptr, menu_selector(RewindButton::fakeCallback));
     if (!ret) return false;
 
-    setSizeMult(1.1f);
+    m_scaleMultiplier = 1.1f;
 
     return true;
 }
 
-// never gets called anyway
-void RewindButton::fakeCallback(cocos2d::CCObject*) {}
+// doesn't matter
+void RewindButton::fakeCallback(cocos2d::CCObject* sender) {}
 
 void RewindButton::selected() {
     bool ate = static_cast<HookedGJBaseGameLayer*>(GJBaseGameLayer::get())->rewindStateUpdate(true);

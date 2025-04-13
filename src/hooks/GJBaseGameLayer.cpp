@@ -15,7 +15,10 @@ HookedGJBaseGameLayer::Fields::Fields()
     , m_isTransitioningOut(false)
     
     , m_rewindsCancelled(0)
-    
+
+    , m_secondsPerFrame(1.f / geode::Mod::get()->getSettingValue<int64_t>("frames-per-second"))
+    , m_historyLength(geode::Mod::get()->getSettingValue<int64_t>("history-length"))
+
     , m_bgGradient(nullptr)
     , m_currentPreview(nullptr) {}
 
@@ -56,6 +59,9 @@ void HookedGJBaseGameLayer::update(float dt) {
         return;
     }
 
+    // somewhat scary
+    FMODAudioEngine::get()->update(dt);
+
     auto fields = m_fields.self();
     float trueDt = dt / m_gameState.m_timeWarp;
 
@@ -64,9 +70,9 @@ void HookedGJBaseGameLayer::update(float dt) {
         fields->m_rewindTimer += trueDt;
 
         // change time between ticks to speed up rewind when held for longer
-        float rewindSpeed = .045f;
-        if (fields->m_rewindIndex > 10) rewindSpeed = .03f;
-        if (fields->m_rewindIndex > 15) rewindSpeed = .01f;
+        float rewindSpeed = fields->m_secondsPerFrame;
+        if (fields->m_rewindIndex > 10) rewindSpeed /= 2;
+        if (fields->m_rewindIndex > 15) rewindSpeed /= 2;
 
         // tick rewind if enough time passed
         if (fields->m_rewindTimer > rewindSpeed) {
@@ -80,7 +86,7 @@ void HookedGJBaseGameLayer::update(float dt) {
         fields->m_checkpointTimer += trueDt;
 
         // tick checkpoint if enough time passed
-        if (fields->m_checkpointTimer > .05f) {
+        if (fields->m_checkpointTimer > fields->m_secondsPerFrame) {
             fields->m_checkpointTimer = 0.f;
             addRewindFrame();
         }
@@ -180,17 +186,15 @@ void HookedGJBaseGameLayer::tickRewind() {
 }
 
 void HookedGJBaseGameLayer::startRewind() {
-    // see comments below
-    getParent()->getActionManager()->addAction(cocos2d::CCScaleTo::create(.2f, .9f), this, false);
+    runAction(cocos2d::CCScaleTo::create(.2f / m_gameState.m_timeWarp, .93f));
     setGameplayLayersVisible(false);
 
     tickRewind(); // add first overlay image
 
     m_fields->m_isRewinding = true;
 
-    // cant just use gjbgl actionmanager since itll get paused when rewinding
-    // so using ccscene (or whatever gjbgl parent is)
-    getParent()->getActionManager()->addAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeOut), FMODAudioEngine::get(), false);
+    // target of fademusicaction is always assumed to be fmodaudioengine so this works
+    cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f / m_gameState.m_timeWarp, FadeMusicDirection::FadeOut));
 }
 
 void HookedGJBaseGameLayer::commitRewind() {
@@ -199,12 +203,9 @@ void HookedGJBaseGameLayer::commitRewind() {
     fields->m_isRewinding = false;
     fields->m_isTransitioningOut = true;
 
-    // if i ran the action using gjbgl, it would slow down when timewarp
-    // so run it on ccscene but target this
-    getParent()->getActionManager()->addAction(
+    runAction(
         cocos2d::CCSequence::createWithTwoActions(
-            cocos2d::CCScaleTo::create(.2f, 1.f),
-            // cocos2d::CCDelayTime::create(.1f), // unsure on whether to keep this
+            cocos2d::CCScaleTo::create(.2f / m_gameState.m_timeWarp, 1.f),
             geode::cocos::CallFuncExt::create([this, fields]{
                 setGameplayLayersVisible(true);
 
@@ -223,7 +224,7 @@ void HookedGJBaseGameLayer::commitRewind() {
                 cast->m_checkpointArray->removeLastObject();
                 m_player1->setRotation(frame.m_player1Rotation);
                 m_player2->setRotation(frame.m_player2Rotation);
-                m_attempts--;
+                m_attempts--; // resetLevel increments attempt counter
             
                 // pop all frames between now and reset pos
                 for (int i = 0; i < fields->m_rewindIndex; i++) fields->m_history.pop_front();
@@ -234,15 +235,13 @@ void HookedGJBaseGameLayer::commitRewind() {
                 fields->m_checkpointTimer = 0.f;
                 fields->m_currentPreview = nullptr;
 
+                // fade music back in to pitches stored in m_audioState
                 auto states = frame.m_checkpoint->m_audioState.m_unkMapIntFMODSoundState;
                 std::unordered_map<int, float> pitches = {};
-                // m_pitch exists but seems to be really tiny?
                 for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
-                getParent()->getActionManager()->addAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches), FMODAudioEngine::get(), false);
+                cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f / m_gameState.m_timeWarp, FadeMusicDirection::FadeIn, pitches));
             })
-        ),
-        // target, paused (this isnt runAction!)
-        this, false
+        )
     );
 }
 
