@@ -15,8 +15,8 @@ jobs:
         - name: Windows
           os: windows-latest
 
-        # - name: macOS
-        #   os: macos-latest
+        - name: macOS
+          os: macos-latest
 
         - name: Android32
           os: ubuntu-latest
@@ -26,10 +26,10 @@ jobs:
           os: ubuntu-latest
           target: Android64
 
-        # need to fix rendertexture
-        # - name: iOS
-        #   os: macos-latest
-        #   target: iOS
+        # need to fix rendertexture really
+        - name: iOS
+          os: macos-latest
+          target: iOS
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}

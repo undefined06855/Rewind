@@ -47,8 +47,13 @@ bool RewindButton::init() {
 #endif
 
     spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center);
-    
-    return CCMenuItemSpriteExtra::init(spriteBase, nullptr, nullptr, menu_selector(RewindButton::fakeCallback));
+
+    bool ret = CCMenuItemSpriteExtra::init(spriteBase, nullptr, nullptr, menu_selector(RewindButton::fakeCallback));
+    if (!ret) return false;
+
+    setSizeMult(1.1f);
+
+    return true;
 }
 
 // never gets called anyway

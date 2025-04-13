@@ -57,14 +57,15 @@ void HookedGJBaseGameLayer::update(float dt) {
     }
 
     auto fields = m_fields.self();
+    float trueDt = dt / m_gameState.m_timeWarp;
 
     if (fields->m_isRewinding) {
         // rewind timer
-        fields->m_rewindTimer += dt;
+        fields->m_rewindTimer += trueDt;
 
         // change time between ticks to speed up rewind when held for longer
-        float rewindSpeed = .05f;
-        if (fields->m_rewindIndex > 10) rewindSpeed = .02f;
+        float rewindSpeed = .045f;
+        if (fields->m_rewindIndex > 10) rewindSpeed = .03f;
         if (fields->m_rewindIndex > 15) rewindSpeed = .01f;
 
         // tick rewind if enough time passed
@@ -76,7 +77,7 @@ void HookedGJBaseGameLayer::update(float dt) {
         GJBaseGameLayer::update(dt);
 
         // checkpoint timer
-        fields->m_checkpointTimer += dt;
+        fields->m_checkpointTimer += trueDt;
 
         // tick checkpoint if enough time passed
         if (fields->m_checkpointTimer > .05f) {
@@ -134,6 +135,8 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->render.capture(m_objectLayer->getParent());
     m_background->setPosition(origBGPos);
 
+    geode::log::debug("{}", rentex->sprite);
+
     // set stuff on the sprite
     rentex->sprite->setFlipY(true);
     rentex->sprite->setID("overlay"_spr);
@@ -168,8 +171,8 @@ void HookedGJBaseGameLayer::tickRewind() {
     }
 
     // should always be true except for the first preview
-    if (auto preview = fields->m_currentPreview.lock()) {
-        preview->removeFromParent();
+    if (fields->m_currentPreview) {
+        fields->m_currentPreview->removeFromParent();
     }
 
     // and add
@@ -179,9 +182,9 @@ void HookedGJBaseGameLayer::tickRewind() {
 }
 
 void HookedGJBaseGameLayer::startRewind() {
-    runAction(cocos2d::CCScaleTo::create(.2f, .9f));
-    m_objectLayer->getParent()->setVisible(false);
-    m_shaderLayer->setVisible(false);
+    // see comments below
+    getParent()->getActionManager()->addAction(cocos2d::CCScaleTo::create(.2f, .9f), this, false);
+    setGameplayLayersVisible(false);
 
     tickRewind(); // add first overlay image
 
@@ -198,19 +201,20 @@ void HookedGJBaseGameLayer::commitRewind() {
     fields->m_isRewinding = false;
     fields->m_isTransitioningOut = true;
 
-    runAction(
+    // if i ran the action using gjbgl, it would slow down when timewarp
+    // so run it on ccscene but target this
+    getParent()->getActionManager()->addAction(
         cocos2d::CCSequence::createWithTwoActions(
             cocos2d::CCScaleTo::create(.2f, 1.f),
             // cocos2d::CCDelayTime::create(.1f), // unsure on whether to keep this
             geode::cocos::CallFuncExt::create([this, fields]{
-                m_objectLayer->getParent()->setVisible(true);
-                m_shaderLayer->setVisible(true);
+                setGameplayLayersVisible(true);
 
                 auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
                 
                 // should always be valid at this point but check just in case
-                if (auto preview = fields->m_currentPreview.lock()) {
-                    preview->removeFromParent();
+                if (fields->m_currentPreview) {
+                    fields->m_currentPreview->removeFromParent();
                 }
             
                 // resetlevel loads the last checkpoint in checkpointArray in
@@ -230,6 +234,7 @@ void HookedGJBaseGameLayer::commitRewind() {
                 // and reset members
                 fields->m_isTransitioningOut = false;
                 fields->m_checkpointTimer = 0.f;
+                fields->m_currentPreview = nullptr;
 
                 auto states = frame.m_checkpoint->m_audioState.m_unkMapIntFMODSoundState;
                 std::unordered_map<int, float> pitches = {};
@@ -237,6 +242,16 @@ void HookedGJBaseGameLayer::commitRewind() {
                 for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
                 getParent()->getActionManager()->addAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches), FMODAudioEngine::get(), false);
             })
-        )
+        ),
+        // target, paused (this isnt runAction!)
+        this, false
     );
+}
+
+void HookedGJBaseGameLayer::setGameplayLayersVisible(bool visible) {
+    m_objectLayer->getParent()->setVisible(visible);
+    m_shaderLayer->setVisible(visible);
+    // TODO: switch to member?
+    // note this also contains all the layers above shader layers and not just hitboxes! named wrongly
+    getChildByID("hitbox-node")->setVisible(visible);
 }

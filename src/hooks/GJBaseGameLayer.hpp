@@ -28,7 +28,7 @@ class $modify(HookedGJBaseGameLayer, GJBaseGameLayer) {
         int m_rewindsCancelled;
 
         geode::Ref<cocos2d::CCLayerGradient> m_bgGradient;
-        geode::WeakRef<cocos2d::CCSprite> m_currentPreview;
+        cocos2d::CCSprite* m_currentPreview;
 
         Fields();
         ~Fields();
@@ -44,4 +44,6 @@ class $modify(HookedGJBaseGameLayer, GJBaseGameLayer) {
     
     void startRewind();
     void commitRewind();
+
+    void setGameplayLayersVisible(bool visible);
 };

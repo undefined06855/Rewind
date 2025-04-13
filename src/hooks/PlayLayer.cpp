@@ -24,7 +24,7 @@ void HookedPlayLayer::togglePracticeMode(bool enabled) {
 }
 
 void HookedPlayLayer::pauseGame(bool becauseOfSuspend) {
-    bool isRewinding = reinterpret_cast<HookedGJBaseGameLayer*>(this)->m_fields->m_isRewinding;
-    if (isRewinding) return;
+    auto fields = reinterpret_cast<HookedGJBaseGameLayer*>(this)->m_fields.self();
+    if (fields->m_isRewinding || fields->m_isTransitioningOut) return;
     PlayLayer::pauseGame(becauseOfSuspend);
 }
