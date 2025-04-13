@@ -135,8 +135,6 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->render.capture(m_objectLayer->getParent());
     m_background->setPosition(origBGPos);
 
-    geode::log::debug("{}", rentex->sprite);
-
     // set stuff on the sprite
     rentex->sprite->setFlipY(true);
     rentex->sprite->setID("overlay"_spr);
