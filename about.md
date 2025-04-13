@@ -7,3 +7,14 @@ by [undefined0](user:13351341)
 
 
 remember to fill this out
+
+todo:
+- mod icon
+- ios
+- settings
+- performance checks
+- stuff on ui layer (stuff set with ui trigger) not being drawn to frame preview rendertexture
+- camera rotation not taken into account
+todo later:
+- shaders not being drawn to rendertexture
+- maybe move rendertexture "fix" to a separate mod for other mods to depend on?
