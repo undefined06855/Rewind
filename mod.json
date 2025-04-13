@@ -6,17 +6,18 @@
         "android": "2.2074",
         "ios": "2.2074"
     },
+
     "version": "v1.0.2",
     "id": "undefined0.rewind",
     "name": "Rewind",
     "developer": "undefined0",
     "description": "It's Rewind time - quickly go back to a previous point in the level!",
     "tags": [ "gameplay" ],
+
     "resources": {
-        "sprites": [
-            "resources/*.png"
-        ]
+        "sprites": [ "resources/*.png" ]
     },
+
     "dependencies": {
         "geode.custom-keybinds": {
             "version": "v1.10.3",
@@ -30,9 +31,11 @@
         },
         "geode.node-ids": "v1.20.1"
     },
+
     "links": {
         "source": "https://github.com/undefined06855/Rewind"
     },
+
     "settings": {
         "frames-per-second": {
             "name": "Frames per second",
