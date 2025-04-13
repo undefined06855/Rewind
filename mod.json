@@ -39,10 +39,10 @@
 			"min": 2,
 			"max": 60,
 			"default": {
-				"android": 20,
-				"ios": 20,
-				"win": 30,
-				"mac": 30
+				"android": 15,
+				"ios": 15,
+				"win": 20,
+				"mac": 20
 			}
 		},
 		"history-length": {

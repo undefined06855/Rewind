@@ -27,9 +27,9 @@ jobs:
           target: Android64
 
         # need to fix rendertexture really
-        - name: iOS
-          os: macos-latest
-          target: iOS
+        # - name: iOS
+        #   os: macos-latest
+        #   target: iOS
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}

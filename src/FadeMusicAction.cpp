@@ -36,6 +36,9 @@ bool FadeMusicAction::init(float d, FadeMusicDirection dir, const std::unordered
         m_initialOrTargetPitches = /* (copy) */ targetPitches;
     }
 
+    // just in case
+    FMODAudioEngine::get()->stopAllActions();
+
     return true;
 }
 

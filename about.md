@@ -5,17 +5,6 @@ by [undefined0](user:13351341)
 
 "It's Rewind time." - Will Smith, 2018
 
+This mod adds a rewind button in practice that allows you to go back in time and continue the level from a previous moment, without having to spam checkpoints!
 
-remember to fill this out
-
-todo:
-- mod icon
-- ios????
-- performance checks
-- stuff on ui layer (stuff set with ui trigger) not being drawn to frame preview rendertexture
-- camera rotation not taken into account
-- timeline to show how many frames are left
-- toggle mode instead of hold by default
-todo later:
-- shaders not being drawn to rendertexture
-- maybe move rendertexture "fix" to a separate mod for other mods to depend on?
+The mod also has mobile support, with snazzy ui which integrates into GD's existing checkpoint system, and customisable keybinds for Windows and Mac users. iOS support will come eventually!

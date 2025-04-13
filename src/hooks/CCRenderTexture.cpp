@@ -1,7 +1,7 @@
 #include "CCRenderTexture.hpp"
 
-// genuinely just copying cocos source into ccrendertexture begin and end fixes all
-// issues i've had with it and mat's rendertexture (and i assume with level thumbs as well)
+// genuinely just copying cocos source into ccrendertexture begin and end fixes
+// all issues i've had with it and mat's rendertexture (and with level thumbnails as well!)
 // only modification on line 50, removing a fix which crashes modern devices
 // taken from
 // https://github.com/cocos2d/cocos2d-x/blob/cocos2d-x-2.2.3/cocos2dx/misc_nodes/CCRenderTexture.cpp

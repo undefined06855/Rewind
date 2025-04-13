@@ -97,12 +97,13 @@ bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
     auto fields = m_fields.self();
     auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
 
-    // if paused or in normal mode or transitioning or rewinding (but only on keydown)
+    // if paused or in normal mode or transitioning or rewinding (but only on keydown) or level is completing
     if (
         cast->m_isPaused 
         || !cast->m_isPracticeMode
         || fields->m_isTransitioningOut
         || ( down && fields->m_isRewinding )
+        || m_levelEndAnimationStarted
     ) {
         fields->m_rewindsCancelled++;
         return false;
@@ -130,15 +131,14 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     auto fields = m_fields.self();
     auto res = cocos2d::CCDirector::get()->getWinSizeInPixels();
 
-    // GL_RGB used here since we dont need alpha and we have a lot of these
-    // not sure how much memory/performance this really saves though but it's
-    // free so might as well
-    auto rentex = RenderTexture(res.width, res.height, GL_RGB, GL_RGB).intoManagedSprite();
+    auto rentex = RenderTexture(res.width, res.height).intoManagedSprite();
 
     // repeating background breaks in rendertexture, reset pos and capture
     auto origBGPos = m_background->getPosition();
     m_background->setPosition({ 0.f, 0.f });
-    rentex->render.capture(m_objectLayer->getParent());
+    rentex->render.capture(m_objectLayer->getParent(), true);
+    rentex->render.capture(m_shaderLayer, false);
+    rentex->render.capture(getChildByID("hitbox-node"), false);
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
