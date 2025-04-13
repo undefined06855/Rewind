@@ -11,7 +11,7 @@
 	"id": "undefined0.rewind",
 	"name": "Rewind",
 	"developer": "undefined0",
-	"description": "Virtual Console-like rewinding!",
+	"description": "It's Rewind time - quickly go back to a previous point in the level!",
 	"tags": [],
 
 	"resources": {
@@ -28,7 +28,7 @@
 	},
 
 	"links": {
-		"source": "https://github.com/undefined06855/rewind"
+		"source": "https://github.com/undefined06855/Rewind"
 	},
 
 	"settings": {
@@ -52,8 +52,8 @@
 			"min": 20,
 			"max": 400,
 			"default": {
-				"android": 120,
-				"ios": 130,
+				"android": 140,
+				"ios": 140,
 				"win": 180,
 				"mac": 180
 			}
