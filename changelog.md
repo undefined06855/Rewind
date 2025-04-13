@@ -1,4 +1,6 @@
 # Rewind
+## v1.0.2
+- Fix controller default bindings
 ## v1.0.1
 - Add tags
 - Remove controller Y bind by default since it crashes Custom Keybinds
