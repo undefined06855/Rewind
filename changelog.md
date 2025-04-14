@@ -1,4 +1,6 @@
 # Rewind
+## v1.0.4
+- Update mod icon
 ## v1.0.3
 - Ensure more compatibility with other mods
 - Ensure more stability overall
