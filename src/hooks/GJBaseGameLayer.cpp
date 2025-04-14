@@ -136,9 +136,9 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // repeating background breaks in rendertexture, reset pos and capture
     auto origBGPos = m_background->getPosition();
     m_background->setPosition({ 0.f, 0.f });
-    rentex->render.capture(m_objectLayer->getParent(), true);
+    rentex->render.capture(m_objectParent, true);
     rentex->render.capture(m_shaderLayer, false);
-    rentex->render.capture(getChildByID("hitbox-node"), false);
+    rentex->render.capture(m_aboveShaderParent, false);
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
@@ -246,9 +246,7 @@ void HookedGJBaseGameLayer::commitRewind() {
 }
 
 void HookedGJBaseGameLayer::setGameplayLayersVisible(bool visible) {
-    m_objectLayer->getParent()->setVisible(visible);
+    m_objectParent->setVisible(visible);
     m_shaderLayer->setVisible(visible);
-    // TODO: switch to member?
-    // note this also contains all the layers above shader layers and not just hitboxes! named wrongly
-    getChildByID("hitbox-node")->setVisible(visible);
+    m_aboveShaderParent->setVisible(visible);
 }

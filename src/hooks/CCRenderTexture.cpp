@@ -1,5 +1,10 @@
 #include "CCRenderTexture.hpp"
 
+void HookedCCRenderTexture::onModify(auto& self) {
+    (void)self.setHookPriorityPre("cocos2d::CCRenderTexture::begin", geode::Priority::Last);
+    (void)self.setHookPriorityPre("cocos2d::CCRenderTexture::end", geode::Priority::Last);
+}
+
 // genuinely just copying cocos source into ccrendertexture begin and end fixes
 // all issues i've had with it and mat's rendertexture (and with level thumbnails as well!)
 // only modification on line 50, removing a fix which crashes modern devices

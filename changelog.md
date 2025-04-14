@@ -1,4 +1,8 @@
 # Rewind
+## v1.0.3
+- Ensure more compatibility with other mods
+- Ensure more stability overall
+- Make UI more centered
 ## v1.0.2
 - Fix controller default bindings
 ## v1.0.1

@@ -5,15 +5,18 @@
 bool HookedPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
     if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 
+    // these x positions took like 20 minutes to figure out so that it's centred
+
     auto checkpointMenu = m_uiLayer->m_checkpointMenu;
     auto rewindButton = RewindButton::create();
+    rewindButton->setPositionX(13.25f);
     checkpointMenu->addChild(rewindButton);
 
     auto addBtn = checkpointMenu->getChildByID("add-checkpoint-button");
-    if (addBtn) addBtn->setPositionX(-72.f);
+    if (addBtn) addBtn->setPositionX(-58.5f);
     
     auto removeBtn = checkpointMenu->getChildByID("remove-checkpoint-button");
-    if (removeBtn) removeBtn->setPositionX(59.f);
+    if (removeBtn) removeBtn->setPositionX(71.75f);
 
     return true;
 }
