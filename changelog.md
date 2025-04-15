@@ -1,4 +1,6 @@
 # Rewind
+## v1.0.5
+- Allow frames captured during non-practice mode to be used in practice mode
 ## v1.0.4
 - Update mod icon
 ## v1.0.3

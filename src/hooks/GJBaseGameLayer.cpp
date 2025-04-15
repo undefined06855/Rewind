@@ -151,10 +151,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     float currentSongPitch;
     auto frame = RewindFrame{
         .m_checkpoint = geode::Ref(cast->createCheckpoint()),
-        .m_preview = rentex->sprite,
-
-        .m_player1Rotation = m_player1->getRotation(),
-        .m_player2Rotation = m_player2->getRotation(),
+        .m_preview = rentex->sprite
     };
 
     fields->m_history.push_front(frame);
@@ -222,10 +219,8 @@ void HookedGJBaseGameLayer::commitRewind() {
                 cast->m_checkpointArray->addObject(frame.m_checkpoint);
                 cast->resetLevel();
                 cast->m_checkpointArray->removeLastObject();
-                m_player1->setRotation(frame.m_player1Rotation);
-                m_player2->setRotation(frame.m_player2Rotation);
                 m_attempts--; // resetLevel increments attempt counter
-            
+
                 // pop all frames between now and reset pos
                 for (int i = 0; i < fields->m_rewindIndex; i++) fields->m_history.pop_front();
                 fields->m_rewindIndex = 0;

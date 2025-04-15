@@ -23,7 +23,7 @@ bool HookedPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateOb
 
 void HookedPlayLayer::togglePracticeMode(bool enabled) {
     PlayLayer::togglePracticeMode(enabled);
-    reinterpret_cast<HookedGJBaseGameLayer*>(this)->m_fields->m_history.clear();
+    if (!enabled) reinterpret_cast<HookedGJBaseGameLayer*>(this)->m_fields->m_history.clear();
 }
 
 void HookedPlayLayer::pauseGame(bool becauseOfSuspend) {

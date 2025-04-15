@@ -6,9 +6,8 @@ struct RewindFrame {
     geode::Ref<CheckpointObject> m_checkpoint;
     geode::Ref<cocos2d::CCSprite> m_preview;
 
-    // dont get properly set from CheckpointObject
-    float m_player1Rotation;
-    float m_player2Rotation;
+    // FIXME: player rotation/speed doesnt get set properly from checkpointobject
+    // seems to be deeper than just calling setRotation and m_rotationSpeed though
 };
 
 class $modify(HookedGJBaseGameLayer, GJBaseGameLayer) {
