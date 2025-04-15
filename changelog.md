@@ -1,4 +1,6 @@
 # Rewind
+## v1.0.6
+- Fix objects set to be UI by a UI trigger not showing in rewind frames
 ## v1.0.5
 - Allow frames captured during non-practice mode to be used in practice mode
 ## v1.0.4

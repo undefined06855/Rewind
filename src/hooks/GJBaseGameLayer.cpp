@@ -139,6 +139,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->render.capture(m_objectParent, true);
     rentex->render.capture(m_shaderLayer, false);
     rentex->render.capture(m_aboveShaderParent, false);
+    rentex->render.capture(m_unk3480, false);
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
@@ -244,4 +245,5 @@ void HookedGJBaseGameLayer::setGameplayLayersVisible(bool visible) {
     m_objectParent->setVisible(visible);
     m_shaderLayer->setVisible(visible);
     m_aboveShaderParent->setVisible(visible);
+    m_unk3480->setVisible(visible); // objects set to be ui by the ui trigger
 }
