@@ -4,6 +4,10 @@
 #include <geode.custom-keybinds/include/Keybinds.hpp>
 #endif
 
+// TODO: rename the two unk members in bindings?
+// m_unkMapIntFMODSoundState - mapping of channel to fmod sound state
+// m_unk3480 - ccnode containing objects set on the ui layer by a ui trigger
+
 HookedGJBaseGameLayer::Fields::Fields()
     : m_history({})
     , m_rewindIndex(0)
@@ -59,14 +63,10 @@ void HookedGJBaseGameLayer::update(float dt) {
         return;
     }
 
-    // somewhat scary
-    FMODAudioEngine::get()->update(dt);
-
     auto fields = m_fields.self();
-    float trueDt = dt / m_gameState.m_timeWarp;
+    float trueDt = dt / m_gameState.m_timeWarp; // TODO: make this fix the ccscaleto as well?
 
     if (fields->m_isRewinding) {
-        // rewind timer
         fields->m_rewindTimer += trueDt;
 
         // change time between ticks to speed up rewind when held for longer
@@ -82,7 +82,6 @@ void HookedGJBaseGameLayer::update(float dt) {
     } else if (!fields->m_isTransitioningOut) {
         GJBaseGameLayer::update(dt);
 
-        // checkpoint timer
         fields->m_checkpointTimer += trueDt;
 
         // tick checkpoint if enough time passed
@@ -148,7 +147,9 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->sprite->setPosition(getContentSize() / 2.f);
     rentex->sprite->setZOrder(1);
 
-    // and make a frame and push back
+    // and make a frame and push to the front of the deque
+    // allows most recent to be index 0, second to be index 1 etc for easy
+    // indexing
     float currentSongPitch;
     auto frame = RewindFrame{
         .m_checkpoint = geode::Ref(cast->createCheckpoint()),
@@ -192,6 +193,7 @@ void HookedGJBaseGameLayer::startRewind() {
     m_fields->m_isRewinding = true;
 
     // target of fademusicaction is always assumed to be fmodaudioengine so this works
+    // TODO: is dividing by timewarp really necessary for this
     cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f / m_gameState.m_timeWarp, FadeMusicDirection::FadeOut));
 }
 
@@ -223,6 +225,8 @@ void HookedGJBaseGameLayer::commitRewind() {
                 m_attempts--; // resetLevel increments attempt counter
 
                 // pop all frames between now and reset pos
+                // TODO: make this more efficient? dont want thirty off by one
+                // errors
                 for (int i = 0; i < fields->m_rewindIndex; i++) fields->m_history.pop_front();
                 fields->m_rewindIndex = 0;
 
@@ -232,6 +236,7 @@ void HookedGJBaseGameLayer::commitRewind() {
                 fields->m_currentPreview = nullptr;
 
                 // fade music back in to pitches stored in m_audioState
+                // interestingly m_pitches exists but isnt correct? idfk man
                 auto states = frame.m_checkpoint->m_audioState.m_unkMapIntFMODSoundState;
                 std::unordered_map<int, float> pitches = {};
                 for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
@@ -245,5 +250,5 @@ void HookedGJBaseGameLayer::setGameplayLayersVisible(bool visible) {
     m_objectParent->setVisible(visible);
     m_shaderLayer->setVisible(visible);
     m_aboveShaderParent->setVisible(visible);
-    m_unk3480->setVisible(visible); // objects set to be ui by the ui trigger
+    m_unk3480->setVisible(visible);
 }

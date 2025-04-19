@@ -1,4 +1,5 @@
 #include "FadeMusicAction.hpp"
+#include <Geode/binding/FMODAudioEngine.hpp>
 #include <Geode/fmod/fmod_errors.h>
 
 FadeMusicAction::FadeMusicAction()
@@ -35,9 +36,6 @@ bool FadeMusicAction::init(float d, FadeMusicDirection dir, const std::unordered
     } else {
         m_initialOrTargetPitches = /* (copy) */ targetPitches;
     }
-
-    // just in case
-    FMODAudioEngine::get()->stopAllActions();
 
     return true;
 }
