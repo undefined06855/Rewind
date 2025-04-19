@@ -18,4 +18,4 @@ $on_mod(Loaded) {
             fields->m_resolutionMultiplier = geode::Mod::get()->getSettingValue<double>("resolution-multiplier");
         }
     });
-};
+}
