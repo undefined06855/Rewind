@@ -24,7 +24,7 @@ bool HookedMenuLayer::init() {
     }
 
     int kb = values[0];
-    int frames = (kb / 40000) + 20; // https://www.desmos.com/calculator/m2hlel1fjj
+    int frames = (kb / 42000) + 80; // https://www.desmos.com/calculator/m2hlel1fjj
 
     geode::log::info("Video memory checks returned {}kb (approx), mapped to {} frames", kb, frames);
 
@@ -35,9 +35,9 @@ bool HookedMenuLayer::init() {
     auto pop = FLAlertLayer::create(
         "Rewind",
         fmt::format(
-            "Rewind has automagically detected {}GB of video memory free, and "
-            "has set the max history length to {}, which can be customised in "
-            "settings.",
+            "Rewind has automagically detected <cy>{}GB</c> of video memory free, and "
+            "has set the <cj>max history length</c> to <cy>{}</c>, which can be customised in "
+            "the <co>mod settings</c>.",
             kb / 1000000, frames
         ).c_str(),
         "ok"
