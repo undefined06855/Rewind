@@ -9,23 +9,21 @@ bool HookedMenuLayer::init() {
     auto mod = geode::Mod::get();
 
     bool hasSetRecommended = mod->getSavedValue<bool>("has-set-recommended", false);
-    if (hasSetRecommended) return;
+    if (hasSetRecommended) return true;
     mod->setSavedValue<bool>("has-set-recommended", true);
 
     // https://stackoverflow.com/a/5695427
     // no intel support very sad
-    auto values = new int[4]();
+    int values[4] = {};
     glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, values); // nvidia
     glGetIntegerv(GL_TEXTURE_FREE_MEMORY_ATI, values); // amd (ati)
 
     if (values[0] == 0) {
         geode::log::info("No data returned from vram checks :( ({}, {}, {}, {})", values[0], values[1], values[2], values[3]);
-        delete[] values;
-        return;
+        return true;
     }
 
     int kb = values[0];
-    delete[] values;
     int frames = (kb / 40000) + 20; // https://www.desmos.com/calculator/m2hlel1fjj
 
     geode::log::info("Video memory checks returned {}kb (approx), mapped to {} frames", kb, frames);
