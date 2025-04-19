@@ -1,4 +1,7 @@
 # Rewind
+## v1.1.0
+- Add automatic checking of video memory to automatically set history length
+- Fix a bug that made history length always 150 frames regardless of the setting
 ## v1.0.7
 - Remove unnecessary internal code
 - Add more options for lower end devices 

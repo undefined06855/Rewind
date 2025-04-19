@@ -164,7 +164,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     fields->m_history.push_front(frame);
 
     // shouldnt run more than once really
-    while (fields->m_history.size() > 150) {
+    while (fields->m_history.size() > fields->m_historyLength) {
         fields->m_history.pop_back();
     }
 }
