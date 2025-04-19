@@ -20,7 +20,7 @@ $on_mod(Loaded) {
         }
     });
 
-
+#ifdef GEODE_IS_WINDOWS
     // populate defaults by getting amount of system vram
     bool hasSetRecommended = geode::Mod::get()->getSavedValue<bool>("has-set-recommended", false);
     if (hasSetRecommended) return;
@@ -42,4 +42,5 @@ $on_mod(Loaded) {
     geode::log::info("Video memory checks returned {}", values[0]);
 
     delete[] values;
+#endif
 }
