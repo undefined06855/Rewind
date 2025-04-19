@@ -1,4 +1,7 @@
 # Rewind
+## v1.0.7
+- Remove unnecessary internal code
+- Add more options for lower end devices 
 ## v1.0.6
 - Fix objects set to be UI by a UI trigger not showing in rewind frames
 ## v1.0.5
