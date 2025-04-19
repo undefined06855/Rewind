@@ -56,7 +56,7 @@
             "description": "The length of rewind history stored, in capture frame count.",
             "type": "int",
             "min": 20,
-            "max": 400,
+            "max": 500,
             "default": {
                 "android": 140,
                 "ios": 140,
