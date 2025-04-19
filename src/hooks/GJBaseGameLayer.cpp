@@ -22,6 +22,7 @@ HookedGJBaseGameLayer::Fields::Fields()
 
     , m_secondsPerFrame(1.f / geode::Mod::get()->getSettingValue<int64_t>("frames-per-second"))
     , m_historyLength(geode::Mod::get()->getSettingValue<int64_t>("history-length"))
+    , m_resolutionMultiplier(geode::Mod::get()->getSettingValue<double>("frame-resolution"))
 
     , m_bgGradient(nullptr)
     , m_currentPreview(nullptr) {}
@@ -130,7 +131,10 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     auto fields = m_fields.self();
     auto res = cocos2d::CCDirector::get()->getWinSizeInPixels();
 
-    auto rentex = RenderTexture(res.width, res.height).intoManagedSprite();
+    auto rentex = RenderTexture(
+        res.width * fields->m_resolutionMultiplier,
+        res.height * fields->m_resolutionMultiplier
+    ).intoManagedSprite();
 
     // repeating background breaks in rendertexture, reset pos and capture
     auto origBGPos = m_background->getPosition();
@@ -146,6 +150,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->sprite->setID("overlay"_spr);
     rentex->sprite->setPosition(getContentSize() / 2.f);
     rentex->sprite->setZOrder(1);
+    rentex->sprite->setScale(1.f / fields->m_resolutionMultiplier);
 
     // and make a frame and push to the front of the deque
     // allows most recent to be index 0, second to be index 1 etc for easy
@@ -185,7 +190,10 @@ void HookedGJBaseGameLayer::tickRewind() {
 }
 
 void HookedGJBaseGameLayer::startRewind() {
-    runAction(cocos2d::CCScaleTo::create(.2f / m_gameState.m_timeWarp, .93f));
+    // fix animations getting slown down - correct timewarp gets restored anyway
+    applyTimeWarp(1.f);
+
+    runAction(cocos2d::CCScaleTo::create(.2f, .93f));
     setGameplayLayersVisible(false);
 
     tickRewind(); // add first overlay image
@@ -194,7 +202,7 @@ void HookedGJBaseGameLayer::startRewind() {
 
     // target of fademusicaction is always assumed to be fmodaudioengine so this works
     // TODO: is dividing by timewarp really necessary for this
-    cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f / m_gameState.m_timeWarp, FadeMusicDirection::FadeOut));
+    cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeOut));
 }
 
 void HookedGJBaseGameLayer::commitRewind() {
@@ -205,7 +213,7 @@ void HookedGJBaseGameLayer::commitRewind() {
 
     runAction(
         cocos2d::CCSequence::createWithTwoActions(
-            cocos2d::CCScaleTo::create(.2f / m_gameState.m_timeWarp, 1.f),
+            cocos2d::CCScaleTo::create(.2f, 1.f),
             geode::cocos::CallFuncExt::create([this, fields]{
                 setGameplayLayersVisible(true);
 
@@ -240,7 +248,7 @@ void HookedGJBaseGameLayer::commitRewind() {
                 auto states = frame.m_checkpoint->m_audioState.m_unkMapIntFMODSoundState;
                 std::unordered_map<int, float> pitches = {};
                 for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
-                cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f / m_gameState.m_timeWarp, FadeMusicDirection::FadeIn, pitches));
+                cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches));
             })
         )
     );

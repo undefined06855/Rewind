@@ -7,7 +7,7 @@
         "ios": "2.2074"
     },
 
-    "version": "v1.0.6",
+    "version": "v1.0.7",
     "id": "undefined0.rewind",
     "name": "Rewind",
     "developer": "undefined0",
@@ -48,11 +48,12 @@
                 "ios": 15,
                 "win": 20,
                 "mac": 20
-            }
+            },
+            "control": { "arrows": false, "slider-step": 5 }
         },
         "history-length": {
             "name": "History length",
-            "description": "The length of rewind history stored, in frames.",
+            "description": "The length of rewind history stored, in capture frame count.",
             "type": "int",
             "min": 20,
             "max": 400,
@@ -61,7 +62,22 @@
                 "ios": 140,
                 "win": 180,
                 "mac": 180
-            }
+            },
+            "control": { "arrows": false, "slider-step": 5 }
+        },
+        "frame-resolution": {
+            "name": "Frame resolution multiplier",
+            "description": "A multiplier for the resolution every frame is captured at.",
+            "type": "float",
+            "min": 0.2,
+            "max": 1.5,
+            "default": {
+                "android": 0.8,
+                "ios": 0.8,
+                "win": 0.9,
+                "mac": 1.0
+            },
+            "control": { "arrows": false }
         }
     }
 }
