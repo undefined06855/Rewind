@@ -20,6 +20,30 @@ bool HookedMenuLayer::init() {
 
     if (values[0] == 0) {
         geode::log::info("No data returned from vram checks :( ({}, {}, {}, {})", values[0], values[1], values[2], values[3]);
+        
+        // this code is amazing
+        auto pop = FLAlertLayer::create(
+            "Rewind",
+            fmt::format(
+                "Rewind cannot detect the amount of video memory free"
+#ifdef GEODE_IS_WINDOWS
+                ", most likely because you have an <cl>Intel</c> graphics card, "
+                "or are using <co>integrated graphics</c>. "
+#else
+                " on this platform. "
+#endif
+                "Although Rewind has applied <cy>suitable defaults</c>, if you"
+                "know you have a <cr>bad "
+                GEODE_DESKTOP("computer")
+                GEODE_MOBILE("phone")
+                "</c>, please adjust the history and capture frequency in the",
+                "<co>mod settings</c>."
+            ).c_str(),
+            "ok"
+        );
+        pop->m_scene = this;
+        pop->show();
+
         return true;
     }
 
@@ -37,9 +61,9 @@ bool HookedMenuLayer::init() {
     auto pop = FLAlertLayer::create(
         "Rewind",
         fmt::format(
-            "Rewind has automagically detected <cy>{}GB</c> of video memory free, and "
-            "has set the <cj>max history length</c> to <cy>{}</c>, which can be customised in "
-            "the <co>mod settings</c>.",
+            "Rewind has automagically detected <cy>{}GB</c> of video memory "
+            "free, and has set the <cj>max history length</c> to <cy>{}</c>, "
+            "which can be customised in the <co>mod settings</c>.",
             gb < 1 ? "less than 1" : fmt::to_string(gb), frames
         ).c_str(),
         "ok"

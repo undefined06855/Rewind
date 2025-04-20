@@ -53,7 +53,7 @@
         },
         "history-length": {
             "name": "History length",
-            "description": "The length of rewind history stored, in capture frame count. This will be attempted to be automatically populated on windows machines with Nvidia or AMD graphics cards by the amount of video memory available.",
+            "description": "The length of rewind history stored, in capture frame count. This will be automatically populated on windows machines with Nvidia or AMD graphics cards by the amount of video memory available.",
             "type": "int",
             "min": 20,
             "max": 500,
