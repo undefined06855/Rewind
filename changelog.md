@@ -1,4 +1,7 @@
 # Rewind
+## v1.1.1
+- Adjust video memory to default settings calculation
+- Add popup that shows when video memory cannot be checked
 ## v1.1.0
 - Add automatic checking of video memory to automatically set history length
 - Fix a bug that made history length always 150 frames regardless of the setting

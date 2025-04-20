@@ -33,7 +33,7 @@ bool HookedMenuLayer::init() {
                 " on this platform. "
 #endif
                 "Although Rewind has applied <cy>suitable defaults</c>, if you"
-                "know you have a <cr>bad "
+                "know you have a <cr>lower end "
                 GEODE_DESKTOP("computer")
                 GEODE_MOBILE("phone")
                 "</c>, please adjust the history and capture frequency in the",
