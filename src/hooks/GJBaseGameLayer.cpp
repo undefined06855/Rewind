@@ -4,10 +4,6 @@
 #include <geode.custom-keybinds/include/Keybinds.hpp>
 #endif
 
-// TODO: rename the two unk members in bindings?
-// m_unkMapIntFMODSoundState - mapping of channel to fmod sound state
-// m_unk3480 - ccnode containing objects set on the ui layer by a ui trigger
-
 HookedGJBaseGameLayer::Fields::Fields()
     : m_history({})
     , m_rewindIndex(0)
@@ -142,7 +138,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     rentex->render.capture(m_objectParent, true);
     rentex->render.capture(m_shaderLayer, false);
     rentex->render.capture(m_aboveShaderParent, false);
-    rentex->render.capture(m_unk3480, false);
+    rentex->render.capture(m_uiTriggerUI, false);
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
@@ -245,7 +241,7 @@ void HookedGJBaseGameLayer::commitRewind() {
 
                 // fade music back in to pitches stored in m_audioState
                 // interestingly m_pitches exists but isnt correct? idfk man
-                auto states = frame.m_checkpoint->m_audioState.m_unkMapIntFMODSoundState;
+                auto states = frame.m_checkpoint->m_audioState.m_soundStateForChannels;
                 std::unordered_map<int, float> pitches = {};
                 for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
                 cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches));
@@ -258,5 +254,5 @@ void HookedGJBaseGameLayer::setGameplayLayersVisible(bool visible) {
     m_objectParent->setVisible(visible);
     m_shaderLayer->setVisible(visible);
     m_aboveShaderParent->setVisible(visible);
-    m_unk3480->setVisible(visible);
+    m_uiTriggerUI->setVisible(visible);
 }
