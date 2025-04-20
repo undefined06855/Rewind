@@ -1,5 +1,6 @@
-#ifdef GEODE_IS_WINDOWS
 #include "MenuLayer.hpp"
+
+#ifdef GEODE_IS_WINDOWS
 #include <Geode/cocos/platform/third_party/win32/OGLES/GL/glew.h>
 
 // populate defaults by getting amount of system vram
@@ -21,23 +22,15 @@ bool HookedMenuLayer::init() {
     if (values[0] == 0) {
         geode::log::info("No data returned from vram checks :( ({}, {}, {}, {})", values[0], values[1], values[2], values[3]);
         
-        // this code is amazing
         auto pop = FLAlertLayer::create(
             "Rewind",
             fmt::format(
-                "Rewind cannot detect the amount of video memory free"
-#ifdef GEODE_IS_WINDOWS
-                ", most likely because you have an <cl>Intel</c> graphics card, "
-                "or are using <co>integrated graphics</c>. "
-#else
-                " on this platform. "
-#endif
-                "Although Rewind has applied <cy>suitable defaults</c>, if you "
-                "know you have a <cr>lower end "
-                GEODE_DESKTOP("computer")
-                GEODE_MOBILE("phone")
-                "</c>, please adjust the history and capture frequency in the "
-                "<co>mod settings</c>."
+                "Rewind cannot detect the amount of video memory free, most "
+                "likely because you have an <cl>Intel</c> graphics card, or "
+                "are using <co>integrated graphics</c>. Although Rewind has "
+                "applied <cy>suitable defaults</c>, if you know you have a "
+                "<cr>lower end computer</c>, please adjust the history length "
+                "and capture frequency in the <co>mod settings</c>."
             ).c_str(),
             "ok"
         );
@@ -73,4 +66,33 @@ bool HookedMenuLayer::init() {
 
     return true;
 }
+
+#else
+
+// for boring platforms that dont support it
+bool HookedMenuLayer::init() {
+    if (!MenuLayer::init()) return false;
+
+    geode::log::info("Platform doesn't support fancy vram checks!");
+
+    auto pop = FLAlertLayer::create(
+        "Rewind",
+        fmt::format(
+            "Rewind cannot detect the amount of video memory free, likely "
+            "because you are on an unsupported platform. Rewind has applied "
+            "<cy>suitable defaults</c>, however if you know you have a "
+            "<cr>lower end "
+            GEODE_DESKTOP("computer")
+            GEODE_MOBILE("phone")
+            "</c>, please adjust the history length and capture frequency in "
+            "the <co>mod settings</c>."
+        ).c_str(),
+        "ok"
+    );
+    pop->m_scene = this;
+    pop->show();
+
+    return true;
+}
+
 #endif
