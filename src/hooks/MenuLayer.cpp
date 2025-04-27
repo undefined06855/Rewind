@@ -73,13 +73,19 @@ bool HookedMenuLayer::init() {
 bool HookedMenuLayer::init() {
     if (!MenuLayer::init()) return false;
 
+    auto mod = geode::Mod::get();
+
+    bool hasSetRecommended = mod->getSavedValue<bool>("has-set-recommended", false);
+    if (hasSetRecommended) return true;
+    mod->setSavedValue<bool>("has-set-recommended", true);
+
     geode::log::info("Platform doesn't support fancy vram checks!");
 
     auto pop = FLAlertLayer::create(
         "Rewind",
         fmt::format(
-            "Rewind cannot detect the amount of video memory free, likely "
-            "because you are on an unsupported platform. Rewind has applied "
+            "Rewind cannot detect the amount of video memory free, because you "
+            "you are on a non-Windows platform. Rewind has applied "
             "<cy>suitable defaults</c>, however if you know you have a "
             "<cr>lower end "
             GEODE_DESKTOP("computer")

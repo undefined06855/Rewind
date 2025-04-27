@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.2
+- Fix video memory popup showing on every boot on non-supported devices
 ## v1.1.1
 - Adjust video memory to default settings calculation
 - Add popup that shows when video memory cannot be checked
