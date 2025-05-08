@@ -22,6 +22,7 @@ bool RewindButton::init() {
     rewindSprite->setScale(1.2f);
 
     auto spriteBase = cocos2d::CCSprite::create("checkpoint-ui-base.png"_spr);
+    spriteBase->setCascadeOpacityEnabled(true);
     spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center, { -3.f, 0.f });
 
 #ifndef GEODE_IS_IOS
@@ -48,6 +49,8 @@ bool RewindButton::init() {
     if (!ret) return false;
 
     m_scaleMultiplier = 1.1f;
+
+    setCascadeOpacityEnabled(true);
 
     return true;
 }

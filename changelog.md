@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.3
+- Make rewind button opacity follow other checkpoint buttons
 ## v1.1.2
 - Fix video memory popup showing on every boot on non-supported devices
 ## v1.1.1
