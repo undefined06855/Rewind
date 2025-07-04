@@ -33,5 +33,7 @@ void FadeMusicAction::update(float time) {
         eased = 1.f - std::sqrt(1.f - std::pow(time - 1.f, 2.f));
     }
 
-    FMODAudioEngine::get()->m_backgroundMusicChannel->setPitch(eased);
+    auto engine = FMODAudioEngine::get();
+    engine->m_backgroundMusicChannel->setPitch(eased); // music
+    engine->m_globalChannel->setPitch(eased); // sfx
 }
