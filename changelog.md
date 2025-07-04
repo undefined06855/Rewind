@@ -1,4 +1,7 @@
 # Rewind
+## v1.1.4
+- Fix issues with the pitch fading effect when rewinding
+- Add option to not capture frames in normal mode
 ## v1.1.3
 - Make rewind button opacity follow other checkpoint buttons
 ## v1.1.2

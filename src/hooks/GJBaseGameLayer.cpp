@@ -19,6 +19,7 @@ HookedGJBaseGameLayer::Fields::Fields()
     , m_secondsPerFrame(1.f / geode::Mod::get()->getSettingValue<int64_t>("frames-per-second"))
     , m_historyLength(geode::Mod::get()->getSettingValue<int64_t>("history-length"))
     , m_resolutionMultiplier(geode::Mod::get()->getSettingValue<double>("frame-resolution"))
+    , m_captureInNormalMode(geode::Mod::get()->getSettingValue<bool>("capture-in-normal-mode"))
 
     , m_bgGradient(nullptr)
     , m_currentPreview(nullptr) {}
@@ -125,6 +126,9 @@ bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
 void HookedGJBaseGameLayer::addRewindFrame() {
     auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
     auto fields = m_fields.self();
+
+    if (!cast->m_isPracticeMode && !fields->m_captureInNormalMode) return;
+
     auto res = cocos2d::CCDirector::get()->getWinSizeInPixels();
 
     auto rentex = RenderTexture(
@@ -239,12 +243,7 @@ void HookedGJBaseGameLayer::commitRewind() {
                 fields->m_checkpointTimer = 0.f;
                 fields->m_currentPreview = nullptr;
 
-                // fade music back in to pitches stored in m_audioState
-                // interestingly m_pitches exists but isnt correct? idfk man
-                auto states = frame.m_checkpoint->m_audioState.m_soundStateForChannels;
-                std::unordered_map<int, float> pitches = {};
-                for (auto& [channel, state] : states) { pitches[channel] = state.m_speed; }
-                cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn, pitches));
+                cocos2d::CCScene::get()->runAction(FadeMusicAction::create(.65f, FadeMusicDirection::FadeIn));
             })
         )
     );

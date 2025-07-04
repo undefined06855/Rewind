@@ -30,6 +30,7 @@ class $modify(HookedGJBaseGameLayer, GJBaseGameLayer) {
         float m_secondsPerFrame;
         int m_historyLength;
         float m_resolutionMultiplier;
+        bool m_captureInNormalMode;
 
         geode::Ref<cocos2d::CCLayerGradient> m_bgGradient;
         cocos2d::CCSprite* m_currentPreview;
