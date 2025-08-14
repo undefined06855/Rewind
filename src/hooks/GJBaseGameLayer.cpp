@@ -157,6 +157,7 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // indexing
     float currentSongPitch;
     auto frame = RewindFrame{
+        // FIXME: checkpoint stores m_isPracticeMode and can rewind to a frame that stores false for it? (m_unk11e8??)
         .m_checkpoint = geode::Ref(cast->createCheckpoint()),
         .m_preview = rentex->sprite
     };
