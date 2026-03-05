@@ -1,8 +1,5 @@
 #include "GJBaseGameLayer.hpp"
 #include "../FadeMusicAction.hpp"
-#ifndef GEODE_IS_IOS
-#include <geode.custom-keybinds/include/Keybinds.hpp>
-#endif
 
 HookedGJBaseGameLayer::Fields::Fields()
     : m_history({})
@@ -13,8 +10,6 @@ HookedGJBaseGameLayer::Fields::Fields()
 
     , m_isRewinding(false)
     , m_isTransitioningOut(false)
-    
-    , m_rewindsCancelled(0)
 
     , m_secondsPerFrame(1.f / geode::Mod::get()->getSettingValue<int64_t>("frames-per-second"))
     , m_historyLength(geode::Mod::get()->getSettingValue<int64_t>("history-length"))
@@ -38,12 +33,15 @@ bool HookedGJBaseGameLayer::init() {
 
     auto fields = m_fields.self();
 
-#ifndef GEODE_IS_IOS
-    addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
-        bool ate = rewindStateUpdate(event->isDown());
-        return ate ? geode::ListenerResult::Stop : geode::ListenerResult::Propagate;
-    }, "rewind"_spr);
-#endif
+    addEventListener(
+        geode::KeybindSettingPressedEventV3(geode::Mod::get(), "keybind"),
+        [this](geode::Keybind const& keybind, bool down, bool repeat, double timestamp) {
+            if (repeat) return false;
+
+            bool ate = rewindStateUpdate(down);
+            return ate;
+        }
+    );
 
     // background gradient
     fields->m_bgGradient = cocos2d::CCLayerGradient::create({ 0, 101, 253, 255 }, { 0, 46, 115, 255 }, { -.5f, -1.f });
@@ -94,29 +92,21 @@ bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
     auto fields = m_fields.self();
     auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
 
-    // if paused or in normal mode or transitioning or rewinding (but only on keydown) or level is completing
     if (
-        cast->m_isPaused 
+        cast->m_isPaused
         || !cast->m_isPracticeMode
         || fields->m_isTransitioningOut
-        || ( down && fields->m_isRewinding )
+        || ( down && fields->m_isRewinding ) // down but we are already rewinding
+        || (!down && !fields->m_isRewinding) // up but we are already not rewinding
         || m_levelEndAnimationStarted
     ) {
-        fields->m_rewindsCancelled++;
         return false;
     }
 
-    // see comment on m_rewindsCancelled member for more info
-    if (fields->m_rewindsCancelled > 0) {
-        fields->m_rewindsCancelled--;
-        return false;
-    }
-    
     if (down) {
         fields->m_rewindTimer = 0.f;
         startRewind();
     } else {
-        // released key, commit
         commitRewind();
     }
 
@@ -157,7 +147,6 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // indexing
     float currentSongPitch;
     auto frame = RewindFrame{
-        // FIXME: checkpoint stores m_isPracticeMode and can rewind to a frame that stores false for it? (m_unk11e8??)
         .m_checkpoint = geode::Ref(cast->createCheckpoint()),
         .m_preview = rentex->sprite
     };
@@ -219,12 +208,12 @@ void HookedGJBaseGameLayer::commitRewind() {
                 setGameplayLayersVisible(true);
 
                 auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
-                
+
                 // should always be valid at this point but check just in case
                 if (fields->m_currentPreview) {
                     fields->m_currentPreview->removeFromParent();
                 }
-            
+
                 // resetlevel loads the last checkpoint in checkpointArray in
                 // practice mode
                 auto frame = fields->m_history[fields->m_rewindIndex];

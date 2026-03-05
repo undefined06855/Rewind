@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.5
+- Port to Geode v5 and 2.2081 (bit late...)
 ## v1.1.4
 - Fix issues with the pitch fading effect when rewinding
 - Add option to not capture frames in normal mode
@@ -14,7 +16,7 @@
 - Fix a bug that made history length always 150 frames regardless of the setting
 ## v1.0.7
 - Remove unnecessary internal code
-- Add more options for lower end devices 
+- Add more options for lower end devices
 ## v1.0.6
 - Fix objects set to be UI by a UI trigger not showing in rewind frames
 ## v1.0.5

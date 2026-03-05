@@ -1,7 +1,4 @@
 #include "RewindButton.hpp"
-#ifndef GEODE_IS_IOS
-#include <geode.custom-keybinds/include/Keybinds.hpp>
-#endif
 #include "hooks/GJBaseGameLayer.hpp"
 
 RewindButton* RewindButton::create() {
@@ -25,25 +22,39 @@ bool RewindButton::init() {
     spriteBase->setCascadeOpacityEnabled(true);
     spriteBase->addChildAtPosition(rewindSprite, geode::Anchor::Center, { -3.f, 0.f });
 
-#ifndef GEODE_IS_IOS
     // copy of addBindSprites from custom keybinds UILayer.cpp but slightly modified
     // keeps it consistent with the other checkpoint buttons
-    auto bindContainer = cocos2d::CCNode::create();
-    bindContainer->setScale(.65f);
+    GLubyte opacity = GameManager::get()->m_practiceOpacity * 255;
+    auto bindContainer = CCNode::create();
     bool first = true;
-    for (auto& bind : keybinds::BindManager::get()->getBindsFor("rewind"_spr)) {
+    for (auto& bind : geode::Mod::get()->getSettingValue<std::vector<geode::Keybind>>("keybind")) {
         if (!first) {
-            bindContainer->addChild(cocos2d::CCLabelBMFont::create("/", "bigFont.fnt"));
+            auto separator = cocos2d::CCLabelBMFont::create("/", "bigFont.fnt");
+            separator->setScale(.8f);
+            separator->setOpacity(opacity);
+            bindContainer->addChild(separator);
         }
         first = false;
-        bindContainer->addChild(bind->createLabel());
+
+        auto label = bind.createNode();
+        label->setScale(.8f);
+
+        if (auto text = geode::cast::typeinfo_cast<cocos2d::CCLabelBMFont*>(label)) {
+            text->setFntFile("bigFont.fnt");
+        }
+
+        if (auto rgba = geode::cast::typeinfo_cast<CCRGBAProtocol*>(label)) {
+            rgba->setOpacity(opacity);
+        }
+
+        bindContainer->addChild(label);
     }
+
     bindContainer->setID("binds"_spr);
-    bindContainer->setContentSize({ spriteBase->getContentSize().width / bindContainer->getScale(), 40.f });
-    bindContainer->setLayout(geode::RowLayout::create());
+    bindContainer->setContentSize({ spriteBase->getScaledContentWidth(), 40.f });
+    bindContainer->setLayout(geode::SimpleRowLayout::create()->setMainAxisScaling(geode::AxisScaling::ScaleDown));
     bindContainer->setAnchorPoint({ .5f, .5f });
     spriteBase->addChildAtPosition(bindContainer, geode::Anchor::Bottom, { 0.f, -1.f });
-#endif
 
     bool ret = CCMenuItemSpriteExtra::init(spriteBase, nullptr, nullptr, menu_selector(RewindButton::fakeCallback));
     if (!ret) return false;
