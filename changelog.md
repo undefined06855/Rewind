@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.6
+- Fix the Custom Keybinds keybind hint showing even if you had the mod disabled
 ## v1.1.5
 - Port to Geode v5 and 2.2081 (bit late...)
 ## v1.1.4
