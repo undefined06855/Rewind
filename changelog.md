@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.7
+- Fix everything to do with capturing with shaders, hopefully all visual issues should be fixed
 ## v1.1.6
 - Fix the Custom Keybinds keybind hint showing even if you had the mod disabled
 ## v1.1.5

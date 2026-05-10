@@ -129,10 +129,29 @@ void HookedGJBaseGameLayer::addRewindFrame() {
     // repeating background breaks in rendertexture, reset pos and capture
     auto origBGPos = m_background->getPosition();
     m_background->setPosition({ 0.f, 0.f });
-    rentex->render.capture(m_objectParent, true);
-    rentex->render.capture(m_shaderLayer, false);
-    rentex->render.capture(m_aboveShaderParent, false);
-    rentex->render.capture(m_uiTriggerUI, false);
+
+    std::vector<cocos2d::CCNode*> nodes = {
+        m_objectParent,
+        m_inShaderParent,
+        m_shaderLayer,
+        m_aboveShaderParent,
+        m_objectLayer,
+        m_inShaderObjectLayer,
+        m_aboveShaderObjectLayer,
+        m_uiTriggerUI
+    };
+
+    std::sort(nodes.begin(), nodes.end(), [](cocos2d::CCNode* left, cocos2d::CCNode* right) {
+        return left->getZOrder() < right->getZOrder();
+    });
+
+    bool clear = true;
+    for (auto node : nodes) {
+        if (node->getParent() != this) continue;
+        rentex->render.capture(node, clear);
+        clear = false;
+    }
+
     m_background->setPosition(origBGPos);
 
     // set stuff on the sprite
@@ -241,7 +260,10 @@ void HookedGJBaseGameLayer::commitRewind() {
 
 void HookedGJBaseGameLayer::setGameplayLayersVisible(bool visible) {
     m_objectParent->setVisible(visible);
+    m_inShaderParent->setVisible(visible);
     m_shaderLayer->setVisible(visible);
     m_aboveShaderParent->setVisible(visible);
-    m_uiTriggerUI->setVisible(visible);
+    m_objectLayer->setVisible(visible);
+    m_inShaderObjectLayer->setVisible(visible);
+    m_aboveShaderObjectLayer->setVisible(visible);
 }
