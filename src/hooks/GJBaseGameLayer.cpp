@@ -20,7 +20,7 @@ HookedGJBaseGameLayer::Fields::Fields()
     , m_currentPreview(nullptr)
 
     , m_visitWithColorFlashHook(nullptr)
-    , m_visitWithColorFlashCallback() {}
+    , m_visitWithColorFlashCallback([] {}) {}
 
 HookedGJBaseGameLayer::Fields::~Fields() {
     if (m_bgGradient) {
@@ -105,9 +105,7 @@ void HookedGJBaseGameLayer::update(float dt) {
 
 void HookedGJBaseGameLayer::visitWithColorFlash() {
     auto& cb = m_fields->m_visitWithColorFlashCallback;
-    if (cb) {
-        cb();
-    }
+    cb();
 }
 
 bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
@@ -137,7 +135,7 @@ bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
 
 void HookedGJBaseGameLayer::callGJBGLVisitWith(geode::FunctionRef<void()> callback) {
     auto fields = m_fields.self();
-    fields->m_visitWithColorFlashCallback = std::move(callback);
+    fields->m_visitWithColorFlashCallback = callback;
 
     bool flashNodeIsVisible = m_flashNode->isVisible();
     m_flashNode->setVisible(true);
