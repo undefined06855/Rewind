@@ -17,7 +17,10 @@ HookedGJBaseGameLayer::Fields::Fields()
     , m_captureInNormalMode(geode::Mod::get()->getSettingValue<bool>("capture-in-normal-mode"))
 
     , m_bgGradient(nullptr)
-    , m_currentPreview(nullptr) {}
+    , m_currentPreview(nullptr)
+
+    , m_visitWithColorFlashHook(nullptr)
+    , m_visitWithColorFlashCallback() {}
 
 HookedGJBaseGameLayer::Fields::~Fields() {
     if (m_bgGradient) {
@@ -48,6 +51,18 @@ bool HookedGJBaseGameLayer::init() {
     fields->m_bgGradient->setID("bg-gradient"_spr);
     fields->m_bgGradient->setScale(1.f / .9f);
     addChild(fields->m_bgGradient, -1000);
+
+    for (auto hook : geode::Mod::get()->getHooks()) {
+        if (hook->getDisplayName() == "GJBaseGameLayer::visitWithColorFlash") {
+            fields->m_visitWithColorFlashHook = hook;
+            (void)hook->disable();
+            break;
+        }
+    }
+
+    if (!fields->m_visitWithColorFlashHook) {
+        geode::log::warn("Visit with color flash hook not found! Backgrounds may break!!");
+    }
 
     return true;
 }
@@ -88,6 +103,13 @@ void HookedGJBaseGameLayer::update(float dt) {
     }
 }
 
+void HookedGJBaseGameLayer::visitWithColorFlash() {
+    auto& cb = m_fields->m_visitWithColorFlashCallback;
+    if (cb) {
+        cb();
+    }
+}
+
 bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
     auto fields = m_fields.self();
     auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
@@ -113,6 +135,20 @@ bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
     return true;
 }
 
+void HookedGJBaseGameLayer::callGJBGLVisitWith(geode::FunctionRef<void()> callback) {
+    auto fields = m_fields.self();
+    fields->m_visitWithColorFlashCallback = std::move(callback);
+
+    bool flashNodeIsVisible = m_flashNode->isVisible();
+    m_flashNode->setVisible(true);
+
+    (void)fields->m_visitWithColorFlashHook->enable();
+    visit();
+    (void)fields->m_visitWithColorFlashHook->disable();
+
+    m_flashNode->setVisible(flashNodeIsVisible);
+}
+
 void HookedGJBaseGameLayer::addRewindFrame() {
     auto cast = geode::cast::typeinfo_cast<PlayLayer*>(this);
     auto fields = m_fields.self();
@@ -125,10 +161,6 @@ void HookedGJBaseGameLayer::addRewindFrame() {
         res.width * fields->m_resolutionMultiplier,
         res.height * fields->m_resolutionMultiplier
     ).intoManagedSprite();
-
-    // repeating background breaks in rendertexture, reset pos and capture
-    auto origBGPos = m_background->getPosition();
-    m_background->setPosition({ 0.f, 0.f });
 
     std::vector<cocos2d::CCNode*> nodes = {
         m_objectParent,
@@ -145,14 +177,14 @@ void HookedGJBaseGameLayer::addRewindFrame() {
         return left->getZOrder() < right->getZOrder();
     });
 
-    bool clear = true;
-    for (auto node : nodes) {
-        if (node->getParent() != this) continue;
-        rentex->render.capture(node, clear);
-        clear = false;
-    }
-
-    m_background->setPosition(origBGPos);
+    callGJBGLVisitWith([this, &nodes, rentex] {
+        bool clear = true;
+        for (auto node : nodes) {
+            if (node->getParent() != this) continue;
+            rentex->render.capture(node, clear);
+            clear = false;
+        }
+    });
 
     // set stuff on the sprite
     rentex->sprite->setFlipY(true);

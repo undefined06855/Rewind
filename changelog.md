@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.8
+- Fix everything to do with camera rotation and background repeating
 ## v1.1.7
 - Fix everything to do with capturing with shaders, hopefully all visual issues should be fixed
 ## v1.1.6
