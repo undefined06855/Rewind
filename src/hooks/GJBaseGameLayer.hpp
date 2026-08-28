@@ -29,7 +29,7 @@ class $modify(HookedGJBaseGameLayer, GJBaseGameLayer) {
         geode::Ref<cocos2d::CCLayerGradient> m_bgGradient;
         cocos2d::CCSprite* m_currentPreview;
 
-        geode::Hook* m_visitWithColorFlashHook;
+        bool m_visitWithColorFlashHookEnabled;
         geode::FunctionRef<void()> m_visitWithColorFlashCallback;
 
         Fields();

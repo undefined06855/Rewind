@@ -1,5 +1,5 @@
 {
-    "geode": "5.9.0",
+    "geode": "5.10.1",
     "gd": {
         "win": "2.2081",
         "mac": "2.2081",
@@ -7,7 +7,7 @@
         "ios": "2.2081"
     },
 
-    "version": "v1.1.8",
+    "version": "v1.1.9",
     "id": "undefined0.rewind",
     "name": "Rewind",
     "developer": "undefined0",

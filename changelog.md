@@ -1,4 +1,6 @@
 # Rewind
+## v1.1.9
+- Fix the log to not log every cog in the bog think about that you sog.
 ## v1.1.8
 - Fix everything to do with camera rotation and background repeating
 ## v1.1.7

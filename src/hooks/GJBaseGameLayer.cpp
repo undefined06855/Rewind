@@ -19,7 +19,7 @@ HookedGJBaseGameLayer::Fields::Fields()
     , m_bgGradient(nullptr)
     , m_currentPreview(nullptr)
 
-    , m_visitWithColorFlashHook(nullptr)
+    , m_visitWithColorFlashHookEnabled(false)
     , m_visitWithColorFlashCallback([] {}) {}
 
 HookedGJBaseGameLayer::Fields::~Fields() {
@@ -51,18 +51,6 @@ bool HookedGJBaseGameLayer::init() {
     fields->m_bgGradient->setID("bg-gradient"_spr);
     fields->m_bgGradient->setScale(1.f / .9f);
     addChild(fields->m_bgGradient, -1000);
-
-    for (auto hook : geode::Mod::get()->getHooks()) {
-        if (hook->getDisplayName() == "GJBaseGameLayer::visitWithColorFlash") {
-            fields->m_visitWithColorFlashHook = hook;
-            (void)hook->disable();
-            break;
-        }
-    }
-
-    if (!fields->m_visitWithColorFlashHook) {
-        geode::log::warn("Visit with color flash hook not found! Backgrounds may break!!");
-    }
 
     return true;
 }
@@ -105,7 +93,11 @@ void HookedGJBaseGameLayer::update(float dt) {
 
 void HookedGJBaseGameLayer::visitWithColorFlash() {
     auto& cb = m_fields->m_visitWithColorFlashCallback;
-    cb();
+    if (m_fields->m_visitWithColorFlashHookEnabled) {
+        cb();
+    } else {
+        GJBaseGameLayer::visitWithColorFlash();
+    }
 }
 
 bool HookedGJBaseGameLayer::rewindStateUpdate(bool down) {
@@ -140,9 +132,9 @@ void HookedGJBaseGameLayer::callGJBGLVisitWith(geode::FunctionRef<void()> callba
     bool flashNodeIsVisible = m_flashNode->isVisible();
     m_flashNode->setVisible(true);
 
-    (void)fields->m_visitWithColorFlashHook->enable();
+    fields->m_visitWithColorFlashHookEnabled = true;
     visit();
-    (void)fields->m_visitWithColorFlashHook->disable();
+    fields->m_visitWithColorFlashHookEnabled = false;
 
     m_flashNode->setVisible(flashNodeIsVisible);
 }
