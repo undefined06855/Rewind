@@ -1,4 +1,7 @@
 # Rewind
+## v1.2.0
+- Added Geode v6 and GD 2.2091 support!
+
 ## v1.1.9
 - Fix the log to not log every cog in the bog think about that you sog.
 ## v1.1.8
